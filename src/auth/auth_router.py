@@ -49,8 +49,7 @@ def login(login_user: OAuth2PasswordRequestForm = Depends()):
     Returns:
         _type_: user
     """
-    user_login = user_service.login(login_user)
-    return user_login
+    return user_service.login(login_user)
 
 
 @user_router.get(
@@ -143,8 +142,7 @@ def change_password(
     Returns:
         _type_: response
     """
-    resp = user_service.change_password(current_user, password_data)
-    return resp
+    return user_service.change_password(current_user, password_data)
 
 
 @user_router.post("/password-reset/complete/{token}/", status_code=status.HTTP_200_OK)
@@ -158,8 +156,7 @@ def password_reset_complete(token: str, password_data: schemas.PasswordData):
     Returns:
         _type_: resp
     """
-    resp = user_service.password_reset_complete(token, password_data)
-    return resp
+    return user_service.password_reset_complete(token, password_data)
 
 
 @user_router.post("/reset-password/", status_code=status.HTTP_200_OK)
@@ -172,8 +169,7 @@ async def reset_password(password_data: schemas.TokenData):
     Returns:
         _type_: response
     """
-    resp = await user_service.password_reset(password_data.email)
-    return resp
+    return await user_service.password_reset(password_data.email)
 
 
 @user_router.post("/resend-account-verification/", status_code=status.HTTP_200_OK)
@@ -186,8 +182,7 @@ async def resend_account_verification(email_data: schemas.TokenData):
     Returns:
         _type_: resp
     """
-    resp = await user_service.resend_verification_token(email_data.email)
-    return resp
+    return await user_service.resend_verification_token(email_data.email)
 
 
 @user_router.post("/account-verification/{token}/", status_code=status.HTTP_200_OK)
@@ -200,5 +195,4 @@ async def account_verification(token: str):
     Returns:
         _type_: response
     """
-    resp = user_service.account_verification_complete(token)
-    return resp
+    return user_service.account_verification_complete(token)

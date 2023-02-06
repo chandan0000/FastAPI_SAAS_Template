@@ -19,9 +19,7 @@ def create_org(
     create_workspace: schemas.OrgCreate,
     current_user: User = Depends(org_dep.premium_ulimited_orgs),
 ):
-    resp = org_service.create_org(current_user.id, create_workspace)
-
-    return resp
+    return org_service.create_org(current_user.id, create_workspace)
 
 
 @org_router.get(
@@ -30,9 +28,7 @@ def create_org(
     response_model=schemas.MessageListOrgResp,
 )
 def get_orgs(current_user: User = Depends(get_current_user)):
-    resp = org_service.get_user_org(current_user.id)
-
-    return resp
+    return org_service.get_user_org(current_user.id)
 
 
 @org_router.get(
@@ -41,9 +37,7 @@ def get_orgs(current_user: User = Depends(get_current_user)):
     response_model=schemas.MessageOrgResp,
 )
 def get_org(org_slug: str, current_user: User = Depends(org_dep.member_dep)):
-    resp = org_service.get_org(org_slug)
-
-    return resp
+    return org_service.get_org(org_slug)
 
 
 @org_router.patch(
@@ -56,9 +50,7 @@ def org_update(
     update_org: schemas.OrgUpdate,
     current_user: User = Depends(org_dep.admin_rights_dep),
 ):
-    resp = org_service.update_org(org_slug, update_org)
-
-    return resp
+    return org_service.update_org(org_slug, update_org)
 
 
 @org_router.delete(
@@ -81,9 +73,7 @@ def generate_org_invite_link(
     role_data: schemas.UpdateOrgMember,
     current_user: User = Depends(org_dep.admin_rights_dep),
 ):
-    resp = org_service.org_link_invite(org_slug, role_data.role)
-
-    return resp
+    return org_service.org_link_invite(org_slug, role_data.role)
 
 
 @org_router.post(
@@ -94,8 +84,7 @@ def generate_org_invite_link(
 def revoke_workspace(
     org_slug: str, current_user: User = Depends(org_dep.admin_rights_dep)
 ):
-    resp = org_service.revoke_org_link(org_slug)
-    return resp
+    return org_service.revoke_org_link(org_slug)
 
 
 @org_router.post(
@@ -104,9 +93,7 @@ def revoke_workspace(
     response_model=schemas.MessageOrgMembResp,
 )
 def org_member_join(token: str, role_token: str, new_org_member: schemas.JoinOrg):
-    resp = org_service.join_org(token, role_token, new_org_member)
-
-    return resp
+    return org_service.join_org(token, role_token, new_org_member)
 
 
 @org_router.get(
@@ -117,9 +104,7 @@ def org_member_join(token: str, role_token: str, new_org_member: schemas.JoinOrg
 def get_org_member(
     org_slug: str, member_id: int, current_user: User = Depends(get_current_user)
 ):
-    resp = org_service.get_org_member(member_id, org_slug)
-
-    return resp
+    return org_service.get_org_member(member_id, org_slug)
 
 
 @org_router.get(
@@ -128,9 +113,7 @@ def get_org_member(
     response_model=schemas.MessageListOrgMemResp,
 )
 def get_org_members(org_slug: str, current_user: User = Depends(get_current_user)):
-    resp = org_service.get_all_org_member(org_slug)
-
-    return resp
+    return org_service.get_all_org_member(org_slug)
 
 
 @org_router.patch(
@@ -144,9 +127,7 @@ def update_org_member(
     update_org_member: schemas.UpdateOrgMember,
     current_user: User = Depends(org_dep.admin_rights_dep),
 ):
-    resp = org_service.update_org_member(org_slug, member_id, update_org_member)
-
-    return resp
+    return org_service.update_org_member(org_slug, member_id, update_org_member)
 
 
 @org_router.delete(

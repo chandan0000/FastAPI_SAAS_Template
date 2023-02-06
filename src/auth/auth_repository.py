@@ -26,16 +26,11 @@ class UserRepo(BaseRepo):
         return new_user
 
     def delete(self, user: User) -> bool:
-        # delete user
-        resp = False
-
         self.db.delete(user)
         self.db.commit()
 
         quick_check = self.base_query().filter(User.email == user.email).first()
-        if not quick_check:
-            resp = True
-        return resp
+        return not quick_check
 
     def update(self, user: User):
         # update user
