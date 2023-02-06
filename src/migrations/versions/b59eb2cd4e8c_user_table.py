@@ -47,11 +47,9 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
     )
-    pass
 
 
 def downgrade() -> None:
     op.drop_constraint("user_refresh_token_user_id_fkey", "user_refresh_token")
     op.drop_table("user_refresh_token")
     op.drop_table("users")
-    pass

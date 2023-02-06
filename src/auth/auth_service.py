@@ -24,11 +24,7 @@ class UserService:
         self.token_repo = token_repo
 
     async def register(self, user: schemas.user_create) -> User:
-        # checking if user exists.
-        user_check = self.user_repo.get_user(user.email)
-
-        # raise an Exception if user exists.
-        if user_check:
+        if user_check := self.user_repo.get_user(user.email):
             raise HTTPException(
                 detail="This User has an account",
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -74,10 +70,7 @@ class UserService:
         # create Access and Refresh Token
         access_token = create_access_token(jsonable_encoder(user_check))
         refresh_token = create_refresh_token(jsonable_encoder(user_check))
-        # check if there is a previously existing refresh token
-        token_check = self.token_repo.get_token(user_check.id)
-        # if token update token column
-        if token_check:
+        if token_check := self.token_repo.get_token(user_check.id):
             token_check.token = refresh_token
             self.token_repo.update_token(token_check)
         else:
@@ -90,15 +83,13 @@ class UserService:
             data=user_check,
             refresh_token=refresh_token_,
         )
-        # DTO response
-        resp = {
+        return {
             "message": "Login Successful",
             "data": login_resp,
             "access_token": access_token,
             "token_type": "bearer",
             "status": status.HTTP_200_OK,
         }
-        return resp
 
     def update_user(self, update_user: schemas.UserUpdate, user: User) -> User:
         # update user

@@ -49,7 +49,6 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["org_id"], ["organization.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["member_id"], ["users.id"], ondelete="CASCADE"),
     )
-    pass
 
 
 def downgrade() -> None:
@@ -61,4 +60,3 @@ def downgrade() -> None:
     )
     op.drop_table("organization")
     op.drop_table("organization_member")
-    pass

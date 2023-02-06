@@ -30,8 +30,7 @@ def create_access_token(data: dict) -> str:
     to_encode = data.copy()
     expire = datetime.now() + timedelta(minutes=access_time_exp)
     to_encode["exp"] = expire
-    encode_jwt = jwt.encode(to_encode, access_secret_key, algorithm=Algorithm)
-    return encode_jwt
+    return jwt.encode(to_encode, access_secret_key, algorithm=Algorithm)
 
 
 def create_refresh_token(data: dict) -> str:
@@ -39,8 +38,7 @@ def create_refresh_token(data: dict) -> str:
     to_encode = data.copy()
     expire = datetime.now() + timedelta(minutes=refresh_time_exp)
     to_encode["exp"] = expire
-    refresh_encode_jwt = jwt.encode(to_encode, refresh_secret_key, algorithm=Algorithm)
-    return refresh_encode_jwt
+    return jwt.encode(to_encode, refresh_secret_key, algorithm=Algorithm)
 
 
 def credential_exception():
@@ -66,10 +64,10 @@ def verify_refresh_token(refresh_tok: str = Header()) -> str:
     # Verify Refresh Token
     try:
         decoded_data = jwt.decode(refresh_tok, refresh_secret_key, algorithms=Algorithm)
-        email = decoded_data.get("email")
-        if not email:
+        if email := decoded_data.get("email"):
+            token_data = TokenData(email=email)
+        else:
             raise refresh_exception()
-        token_data = TokenData(email=email)
     except JWTError:
         raise refresh_exception()
 

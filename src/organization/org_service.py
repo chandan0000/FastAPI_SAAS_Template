@@ -32,8 +32,7 @@ class OrgService:
     def create_org(
         self, user_id: int, org_create: schemas.OrgCreate
     ) -> schemas.MessageOrgResp:
-        org_check = self.org_repo.check_org(org_create.name)
-        if org_check:
+        if org_check := self.org_repo.check_org(org_create.name):
             raise HTTPException(
                 detail="Org exist", status_code=status.HTTP_409_CONFLICT
             )
@@ -51,13 +50,11 @@ class OrgService:
         }
         self.org_member_repo.create_org_member(org_member_dict)
         org = self.orm_call(org)
-        resp = {
+        return {
             "message": "Org Created Successfully",
             "data": org,
             "status": status.HTTP_201_CREATED,
         }
-
-        return resp
 
     def get_org(self, slug: str) -> schemas.MessageOrgResp:
         org = self.org_repo.get_org(slug)
@@ -68,12 +65,11 @@ class OrgService:
             )
 
         org_ = self.orm_call(org)
-        resp = {
+        return {
             "message": "Org Returned",
             "data": org_,
             "status": status.HTTP_200_OK,
         }
-        return resp
 
     def get_user_org(self, user_id: int) -> schemas.MessageListOrgResp:
         user_orgs, _ = self.org_repo.user_org_count_data(user_id)
@@ -83,16 +79,12 @@ class OrgService:
                 status_code=status.HTTP_404_NOT_FOUND,
             )
 
-        orgs = []
-        for user_org in user_orgs:
-            orgs.append(self.orm_call(user_org))
-
-        resp = {
+        orgs = [self.orm_call(user_org) for user_org in user_orgs]
+        return {
             "message": "User Orgs retrieved successfully",
             "data": orgs,
             "status": status.HTTP_200_OK,
         }
-        return resp
 
     def update_org(
         self, slug: str, update_org: schemas.OrgUpdate
@@ -111,22 +103,20 @@ class OrgService:
         org = self.org_repo.update_org(org)
 
         org_ = self.orm_call(org)
-        resp = {
+        return {
             "message": "Org Updated Successfully",
             "data": org_,
             "status": status.HTTP_200_OK,
         }
-        return resp
 
     def delete_org(self, slug: str):
-        org = self.org_repo.get_org(slug)
-
-        if not org:
+        if org := self.org_repo.get_org(slug):
+            self.org_repo.delete_org(org)
+        else:
             raise HTTPException(
                 detail="Org does not exists",
                 status_code=status.HTTP_404_NOT_FOUND,
             )
-        self.org_repo.delete_org(org)
 
     def org_check(self, workspace):
         if not workspace:
@@ -147,12 +137,11 @@ class OrgService:
         name = org.name.split(" ")
         name = "-".join(name)
         invite_link = f"{auth_settings.frontend_url}{name}/invite/{token}/{role_tok}/mixer=invite/"
-        resp = {
+        return {
             "message": "Invite Link Created successfully",
             "data": invite_link,
             "status": status.HTTP_200_OK,
         }
-        return resp
 
     def revoke_org_link(self, org_slug: str):
         org = self.org_repo.get_org(org_slug)
@@ -161,12 +150,11 @@ class OrgService:
         self.org_repo.update_org(org)
         org_ = self.orm_call(org)
 
-        resp = {
+        return {
             "message": "Org revoked successfully",
             "data": org_,
             "status": status.HTTP_200_OK,
         }
-        return resp
 
     def get_org_member_check(self, id: int, org_id: int):
         return self.org_member_repo.get_org_member(org_id, id)
@@ -231,12 +219,11 @@ class OrgService:
         org_member = self.org_member_repo.create_org_member(org_member_data)
         org_member_ = self.member_orm_call(org_member)
 
-        resp = {
+        return {
             "message": "User Joined Org",
             "data": org_member_,
             "status": status.HTTP_201_CREATED,
         }
-        return resp
 
     def get_org_member(self, id: int, org_slug: str) -> schemas.MessageOrgMembResp:
         org = self.org_repo.get_org(org_slug)
@@ -244,13 +231,11 @@ class OrgService:
         org_member_check = self.get_org_member_check(id, org.id)
         self.org_member_check(org_member_check)
         org_member = self.member_orm_call(org_member_check)
-        resp = {
+        return {
             "message": "Org Member Retrieved Successfully",
             "data": org_member,
             "status": status.HTTP_200_OK,
         }
-
-        return resp
 
     def get_all_org_member(self, org_slug: str) -> schemas.MessageListOrgResp:
         org = self.org_repo.get_org(org_slug)
@@ -259,16 +244,14 @@ class OrgService:
         org_member_check = self.org_member_repo.get_org_members(org.id)
         self.org_member_check(org_member_check)
 
-        org_member_ = []
-        for org_member in org_member_check:
-            org_member_.append(self.member_orm_call(org_member))
-
-        resp = {
+        org_member_ = [
+            self.member_orm_call(org_member) for org_member in org_member_check
+        ]
+        return {
             "message": "Org Members retrieved successfully",
             "data": org_member_,
             "status": status.HTTP_200_OK,
         }
-        return resp
 
     def update_org_member(
         self,
@@ -283,13 +266,11 @@ class OrgService:
         org_member.role = role_update.role
         org_member = self.org_member_repo.update_org_member(org_member)
         org_member_ = self.member_orm_call(org_member)
-        resp = {
+        return {
             "message": "Org Member Updated Successfully",
             "data": org_member_,
             "status": status.HTTP_200_OK,
         }
-
-        return resp
 
     def delete_org_member(self, org_slug: str, user_id: int):
         org = self.org_repo.get_org(org_slug)

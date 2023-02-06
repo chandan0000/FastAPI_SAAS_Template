@@ -13,10 +13,7 @@ invite_tokens = URLSafeTimedSerializer(f"{auth_settings.refresh_secret_key}")
 
 
 def gen_token(data: str):
-    # Token is serialized
-    toks = tokens.dumps(data)
-
-    return toks
+    return tokens.dumps(data)
 
 
 def auth_token(data: str):
